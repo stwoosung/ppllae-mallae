@@ -1,23 +1,30 @@
-const request = require('request');
+const axios = require('axios');
 
-const API_KEY = 'vaCGRWEJi1IDLqkGtUiw9f4wlA0DUiCtLfzGLK8kkIpSXVBDkKjIWZ3OcOD2lYv9ULRwnQcV0JtXIScmuvB6jg==' // process.env.API_KEY;
+const API_KEY = process.env.API_KEY 
 
-// API 호출 URL
-const API_NOW_WEATHER = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${ API_KEY }&numOfRows=100&pageNo=1&type=json&pageNo=1&numOfRows=1000&dataType=XML&base_date=20250221&base_time=0600&nx=55&ny=127`;
+const fnGetAPINowWeatherURL = (stringType, date, hour, x, y) => { return `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?serviceKey=${ API_KEY }&numOfRows=100&pageNo=1&type=json&pageNo=1&numOfRows=1000&dataType=${ stringType }&base_date=${ date }&base_time=${ hour }&nx=${ x }&ny=${ y }`; }
+const fnGetDateFormat = (date) => { return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`; }
+const fnGetHourFormat = (date) => { return `${String(date.getHours()).padStart(2, '0')}00`; }
 
+const fnCallAPINowWeather = async (x, y) => {
+    try {
+        let date = new Date();
+        console.log(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
+        let result = await axios.get(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y)); 
 
+        // 정각 업데이트가 아직 이루어지지 않았을 때
+        // 한시간 전 API 결과를 호출한다.
+        if (result.data.response.header.resultCode === "03") {
+            date.setHours(date.getHours() - 1);
+            result = await axios.get(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
+        } 
 
+        // API 결과 정상일 때만 return
+        return result.data.response.header.resultCode === "00" ? result.data.response.body.items : null;
 
-const fnCallAPINowWeather = (x, y) => {
-    request(encodeURI(API_NOW_WEATHER), async function (err, res, body) {
-        if (err != null) {
-            console.log(err);
-            return;
-        }
-        const result = JSON.parse(body).response.body.items;
-
-        console.log(result);
-    });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 module.exports = { 
