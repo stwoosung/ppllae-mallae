@@ -27,18 +27,19 @@
         </v-col>
       </v-row>
     </v-container>
-
+    <!--
     <WeatherAnimation :weather="weather" />
+    -->
   </v-app>
 </template>
 
 <script>
-import WeatherAnimation from '@/components/WeatherAnimation.vue'; 
+// import WeatherAnimation from '@/components/WeatherAnimation.vue'; 
 import { getListFromGeoLocation, getSecondList, getThirdList, getScoreInfo } from '@/api/location';
 
 export default {
   components: {
-    WeatherAnimation,
+    // WeatherAnimation,
   }, 
   data() {
     return {
