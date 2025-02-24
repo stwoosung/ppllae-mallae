@@ -22,7 +22,7 @@
                   🌞 95점
                 </v-col>
               </v-row>
-              <v-row>
+              <v-row class="pb-15">
                 <v-col style="font-size: 1.5em;">
                   빨래하기 딱 좋은 날이에요!
                 </v-col>
