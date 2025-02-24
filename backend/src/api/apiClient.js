@@ -6,12 +6,15 @@ const fnGetAPINowWeatherURL = (stringType, date, hour, x, y) => { return `https:
 const fnGetDateFormat = (date) => { return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`; }
 const fnGetHourFormat = (date) => { return `${String(date.getHours()).padStart(2, '0')}00`; }
 
+
+
 const fnCallAPINowWeather = async (x, y) => {
     try {
         let date = new Date();
         console.log(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
         let result = await axios.get(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y)); 
 
+        // resultCode 03: NO_DATA
         // 정각 업데이트가 아직 이루어지지 않았을 때
         // 한시간 전 API 결과를 호출한다.
         if (result.data.response.header.resultCode === "03") {

@@ -17,6 +17,17 @@
                   <v-select v-model="selected3" :items="items3" label="동 · 면 · 읍"></v-select>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col style="font-size: 5em;">
+                  🌞 95점
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col style="font-size: 1.5em;">
+                  빨래하기 딱 좋은 날이에요!
+                </v-col>
+              </v-row>
+              <chart-component :chartData="chartData"/>
             </v-card-text>
             <!--
             <v-card-actions>
@@ -27,19 +38,20 @@
         </v-col>
       </v-row>
     </v-container>
-    <!--
     <WeatherAnimation :weather="weather" />
-    -->
+    
   </v-app>
 </template>
 
 <script>
-// import WeatherAnimation from '@/components/WeatherAnimation.vue'; 
+import WeatherAnimation from '@/components/WeatherAnimation.vue'; 
+import ChartComponent from '@/components/ChartComponent.vue';
 import { getListFromGeoLocation, getSecondList, getThirdList, getScoreInfo } from '@/api/location';
 
 export default {
   components: {
-    // WeatherAnimation,
+    WeatherAnimation,
+    ChartComponent
   }, 
   data() {
     return {
@@ -56,6 +68,8 @@ export default {
       locDepth3: null, 
       
       weather: 'SUN', // 기본 날씨 설정
+
+      chartData: [10, 20, 30, 50, 60, 80, 70]
     };
   },
   mounted() {
@@ -103,6 +117,10 @@ export default {
     },
     toggleWeather() {
       this.weather = this.weather === 'RAIN' ? 'SNOW' : 'RAIN';
+    },
+    updateChart() {
+      console.log('app')
+      this.chartData = [Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100];
     },
   },
 };
