@@ -24,6 +24,8 @@ router.post('/getThirdList', async (req, res) => {
   res.json(result);
 });
 
+const fnFormatDate = (str) => `${str.slice(4, 6)}/${str.slice(6, 8)} ${str.slice(9, 11)}시`;
+
 router.post('/getScoreInfo', async (req, res) => {
   const { firstValue, secondValue, thirdValue } = req.body;
   
@@ -37,8 +39,9 @@ router.post('/getScoreInfo', async (req, res) => {
   const result = await fnCallAPINowWeather(location[0].x, location[0].y);
   
   const dataTable = []; 
-  const SKY_DATA_CODE = ['', '맑음', '', '구름 많음', '흐림']
-  const PTY_DATA_CODE = ['해당 없음', '비', '비 / 눈', '눈', '소나기']
+  const SKY_DATA_CODE = ['-', '☀️', '-', '🌤️', '🌥️']
+  const PTY_DATA_CODE = ['-', '☔', '☔❄️', '❄️', '🌂']
+  const SNO_DATA_INCLUDES = ['적설없음', '0', '']
 
   result.item.forEach(row => {
 
@@ -60,12 +63,13 @@ router.post('/getScoreInfo', async (req, res) => {
       } else if (row.category === 'REH') {
         existingEntry.REH = row.fcstValue;  
       } else if (row.category === 'SNO') {
-        existingEntry.SNO = row.fcstValue; 
+        existingEntry.SNO = row.fcstValue.includes(SNO_DATA_INCLUDES) ? "-" : row.fcstValue; 
       }
       
     } else {
       dataTable.push({
         time: timeKey,
+        SEQ: fnFormatDate(timeKey), 
         TMP: row.category === 'TMP' ? row.fcstValue : null,
         WSD: row.category === 'WSD' ? row.fcstValue : null, 
         SKY: row.category === 'SKY' ? row.fcstValue : null,
@@ -76,6 +80,8 @@ router.post('/getScoreInfo', async (req, res) => {
       });
     }
   });
+  console.log(dataTable[0]);
+
   res.json([ dataTable ]);
 });
 

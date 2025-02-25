@@ -65,14 +65,14 @@ export default {
 
 
       tableHeaders: [
-        { title: '시각', align: 'start', key: 'time' },
-        { title: '온도(°C)', align: 'end', key: 'TMP' },
-        { title: '풍속(m/s)', align: 'end', key: 'WSD' },
-        { title: '날씨', align: 'end', key: 'SKY' },
-        { title: '강수', align: 'end', key: 'PTY' },
-        { title: '강수확률(%)', align: 'end', key: 'POP' },
-        { title: '습도(%)', align: 'end', key: 'REH' },
-        { title: '적설(cm)', align: 'end', key: 'SNO' },
+        { title: '시각', align: 'center', key: 'SEQ' },
+        { title: '온도(°C)', align: 'center', key: 'TMP' },
+        { title: '날씨', align: 'center', key: 'SKY' },
+        { title: '강수', align: 'center', key: 'PTY' },
+        { title: '강수확률(%)', align: 'center', key: 'POP' },
+        { title: '풍속(m/s)', align: 'center', key: 'WSD' },
+        { title: '습도(%)', align: 'center', key: 'REH' },
+        { title: '적설(cm)', align: 'center', key: 'SNO' },
       ],
       tableContents: [{}],
 
