@@ -27,7 +27,14 @@
                   빨래하기 딱 좋은 날이에요!
                 </v-col>
               </v-row>
+              
+              <v-data-table-virtual :headers="tableHeaders"
+                :items="tableContents"
+                height="300"
+              ></v-data-table-virtual>
+              
               <chart-component :chartData="chartData"/>
+              
             </v-card-text>
             <!--
             <v-card-actions>
@@ -55,6 +62,20 @@ export default {
   }, 
   data() {
     return {
+
+
+      tableHeaders: [
+        { title: '시각', align: 'start', key: 'time' },
+        { title: '온도(°C)', align: 'end', key: 'TMP' },
+        { title: '풍속(m/s)', align: 'end', key: 'WSD' },
+        { title: '날씨', align: 'end', key: 'SKY' },
+        { title: '강수', align: 'end', key: 'PTY' },
+        { title: '강수확률(%)', align: 'end', key: 'POP' },
+        { title: '습도(%)', align: 'end', key: 'REH' },
+        { title: '적설(cm)', align: 'end', key: 'SNO' },
+      ],
+      tableContents: [{}],
+
       selected1: null,
       selected2: null,
       selected3: null,
@@ -101,8 +122,11 @@ export default {
 
     async selected3(value) {
       if (value === null) return;
+      
       let result = await getScoreInfo( { 'firstValue': this.selected1, 'secondValue': this.selected2, 'thirdValue': value } );
-      console.log(result);
+      if (result.data === null) return;
+      
+      this.tableContents = result.data[0];
     }
   }, 
   methods: {
