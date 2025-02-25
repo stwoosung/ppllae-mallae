@@ -25,11 +25,16 @@ router.post('/getThirdList', async (req, res) => {
 });
 
 router.post('/getScoreInfo', async (req, res) => {
-  const { firstValue, secondValue, thirdValue } = req.body; 
+  const { firstValue, secondValue, thirdValue } = req.body;
+  
+  // 위치정보 갱신이 느릴 때 undifined 넘어오는 경우, 예외처리 함
+  if (firstValue === undefined ||  secondValue === undefined || thirdValue === undefined) {
+    res.json(null);
+  }
+  
   const location = await executeQuery('SELECT x, y FROM location WHERE depth1 = ? AND depth2 = ? AND depth3 = ?;', [ firstValue, secondValue, thirdValue ]);
   const result = await fnCallAPINowWeather(location[0].x, location[0].y);
   
-  console.log(firstValue, secondValue, thirdValue);
   console.log(result)
 
   
