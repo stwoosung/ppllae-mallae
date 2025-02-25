@@ -30,7 +30,7 @@
               
               <v-data-table-virtual 
                 :headers="tableHeaders"
-                :items="tableContents"
+                :items="tableContentsUpdate"
                 fixed-header
                 height="350"
               ></v-data-table-virtual>
@@ -149,6 +149,21 @@ export default {
       this.chartData = [Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100];
     },
   },
+  computed: {
+    tableContentsUpdate() {
+      const SKY_DATA_CODE = ['-', '☀️', '-', '🌤️', '🌥️'];
+      const PTY_DATA_CODE = ['-', '☔', '☔❄️', '❄️', '🌂'];
+      const SNO_DATA_INCLUDES = ['적설없음', '0', ''];
+
+      return [...Array(this.tableContents.length).keys()].map(i => {
+        const row = { ...this.tableContents[i % this.tableContents.length] };
+        row.SKY = SKY_DATA_CODE[row.SKY];
+        row.PTY = PTY_DATA_CODE[row.PTY];
+        row.SNO = SNO_DATA_INCLUDES.includes(row.SNO) ? '-' : row.SNO;
+        return row;
+      })
+    }
+  }
 };
 </script>
 

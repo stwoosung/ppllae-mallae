@@ -44,10 +44,7 @@ router.post('/getScoreInfo', async (req, res) => {
   }
   
   const dataTable = []; 
-  const SKY_DATA_CODE = ['-', '\u{1F505}', '-', '\u{26C5}', '\u{2601}']
-  const PTY_DATA_CODE = ['-', '\u{2614}', '\u{2614}\u{2744}', '\u{2744}', '\u{1F302}']
-  const SNO_DATA_INCLUDES = ['적설없음', '0', '']
-
+  
   let nowWeather = null; 
   let nowTemp = null;
 
@@ -58,23 +55,13 @@ router.post('/getScoreInfo', async (req, res) => {
     const existingEntry = dataTable.find(entry => entry.time === timeKey);
 
     if (existingEntry) {
-      if (row.category === 'TMP') { 
-        existingEntry.TMP = row.fcstValue;
-      } else if (row.category === 'WSD') {
-        existingEntry.WSD = row.fcstValue; 
-      } else if (row.category === 'SKY') {
-        
-        console.log(dataTable.length);
-        existingEntry.SKY = SKY_DATA_CODE[row.fcstValue]; 
-      } else if (row.category === 'PTY') {
-        existingEntry.PTY = PTY_DATA_CODE[row.fcstValue]; 
-      } else if (row.category === 'POP') {
-        existingEntry.POP = row.fcstValue; 
-      } else if (row.category === 'REH') {
-        existingEntry.REH = row.fcstValue;  
-      } else if (row.category === 'SNO') {
-        existingEntry.SNO = SNO_DATA_INCLUDES.includes(row.fcstValue) ? "-" : row.fcstValue; 
-      }
+      if (row.category === 'TMP') existingEntry.TMP = row.fcstValue;
+      else if (row.category === 'WSD') existingEntry.WSD = row.fcstValue; 
+      else if (row.category === 'SKY') existingEntry.SKY = row.fcstValue; 
+      else if (row.category === 'PTY') existingEntry.PTY = row.fcstValue; 
+      else if (row.category === 'POP') existingEntry.POP = row.fcstValue; 
+      else if (row.category === 'REH') existingEntry.REH = row.fcstValue;  
+      else if (row.category === 'SNO') existingEntry.SNO = row.fcstValue; 
       
     } else {
       dataTable.push({
@@ -90,7 +77,6 @@ router.post('/getScoreInfo', async (req, res) => {
       }); 
     }
   });
-  console.log(dataTable[0]);
 
   res.json([ dataTable ]);
 });
