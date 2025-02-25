@@ -32,16 +32,24 @@ router.post('/getScoreInfo', async (req, res) => {
   // 위치정보 갱신이 느릴 때 undifined 넘어오는 경우, 예외처리 함
   if (firstValue === undefined ||  secondValue === undefined || thirdValue === undefined) {
     res.json(null);
-    return
+    return;
   }
 
   const location = await executeQuery('SELECT x, y FROM location WHERE depth1 = ? AND depth2 = ? AND depth3 = ?;', [ firstValue, secondValue, thirdValue ]);
   const result = await fnCallAPINowWeather(location[0].x, location[0].y);
+
+  if (result === null || result === undefined) {
+    res.json(null);
+    return;
+  }
   
   const dataTable = []; 
-  const SKY_DATA_CODE = ['-', '☀️', '-', '🌤️', '🌥️']
-  const PTY_DATA_CODE = ['-', '☔', '☔❄️', '❄️', '🌂']
+  const SKY_DATA_CODE = ['-', '\u{1F505}', '-', '\u{26C5}', '\u{2601}']
+  const PTY_DATA_CODE = ['-', '\u{2614}', '\u{2614}\u{2744}', '\u{2744}', '\u{1F302}']
   const SNO_DATA_INCLUDES = ['적설없음', '0', '']
+
+  let nowWeather = null; 
+  let nowTemp = null;
 
   result.item.forEach(row => {
 
@@ -51,10 +59,12 @@ router.post('/getScoreInfo', async (req, res) => {
 
     if (existingEntry) {
       if (row.category === 'TMP') { 
-        existingEntry.TMP = row.fcstValue; 
+        existingEntry.TMP = row.fcstValue;
       } else if (row.category === 'WSD') {
         existingEntry.WSD = row.fcstValue; 
       } else if (row.category === 'SKY') {
+        
+        console.log(dataTable.length);
         existingEntry.SKY = SKY_DATA_CODE[row.fcstValue]; 
       } else if (row.category === 'PTY') {
         existingEntry.PTY = PTY_DATA_CODE[row.fcstValue]; 
@@ -63,7 +73,7 @@ router.post('/getScoreInfo', async (req, res) => {
       } else if (row.category === 'REH') {
         existingEntry.REH = row.fcstValue;  
       } else if (row.category === 'SNO') {
-        existingEntry.SNO = row.fcstValue.includes(SNO_DATA_INCLUDES) ? "-" : row.fcstValue; 
+        existingEntry.SNO = SNO_DATA_INCLUDES.includes(row.fcstValue) ? "-" : row.fcstValue; 
       }
       
     } else {
@@ -77,7 +87,7 @@ router.post('/getScoreInfo', async (req, res) => {
         POP: row.category === 'POP' ? row.fcstValue : null,
         REH: row.category === 'REH' ? row.fcstValue : null, 
         SNO: row.category === 'SNO' ? row.fcstValue : null, 
-      });
+      }); 
     }
   });
   console.log(dataTable[0]);

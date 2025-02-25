@@ -15,7 +15,7 @@ const fnCallAPINowWeather = async (x, y) => {
             date.setHours(date.getHours() - 1);
         }
 
-        // console.log(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
+        console.log(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
         let result = await axios.get(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y)); 
         
         // resultCode 03: NO_DATA

@@ -28,9 +28,11 @@
                 </v-col>
               </v-row>
               
-              <v-data-table-virtual :headers="tableHeaders"
+              <v-data-table-virtual 
+                :headers="tableHeaders"
                 :items="tableContents"
-                height="300"
+                fixed-header
+                height="350"
               ></v-data-table-virtual>
               
               <chart-component :chartData="chartData"/>
