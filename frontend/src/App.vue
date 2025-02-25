@@ -4,16 +4,16 @@
       <v-row justify="center">
         <v-col cols="12" md="6">
           <v-card class="text-center" style="position: relative; z-index: 1;">
-            <v-card-title class="pt-10 pb-10" style="font-size: 2em;">현재 지역의 빨래 점수는?</v-card-title>
+            <v-card-title class="pt-10 pb-10">현재 지역의 빨래 점수는?</v-card-title>
             <v-card-text>
               <v-row>
-                <v-col cols="4">
+                <v-col cols="12" md="4">
                   <v-select v-model="selected1" :items="items1" label="시 · 도"></v-select>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="12" md="4">
                   <v-select v-model="selected2" :items="items2" label="시 · 군 · 구"></v-select>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="12" md="4">
                   <v-select v-model="selected3" :items="items3" label="동 · 면 · 읍"></v-select>
                 </v-col>
               </v-row>
@@ -153,5 +153,15 @@ export default {
 <style>
 body {
   font-family: 'PF스타더스트', sans-serif; 
+}
+
+.v-card-title {
+    font-size: 2em; /* 기본 폰트 사이즈 */
+}
+
+@media (max-width: 600px) {
+    .v-card-title {
+        font-size: 1.5em; /* 모바일에서의 폰트 사이즈 */
+    }
 }
 </style>
