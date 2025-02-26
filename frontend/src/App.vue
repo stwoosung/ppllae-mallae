@@ -18,8 +18,12 @@
                 </v-col>
               </v-row>
               <v-row>
+                <v-col style="font-size: 1.5em;">
+                </v-col>
+              </v-row>
+              <v-row>
                 <v-col style="font-size: 5em;">
-                  🌞 95점
+                  ☀️ 95점
                 </v-col>
               </v-row>
               <v-row class="pb-15">
@@ -64,10 +68,14 @@ export default {
   }, 
   data() {
     return {
-
+      
+      SKY_DATA_CODE: ['-', '☀️', '-', '🌤️', '☁️'],
+      PTY_DATA_CODE: ['-', '☔', '☔❄️', '❄️', '🌂'],
+      SNO_DATA_INCLUDES: ['적설없음', '0', ''],
 
       tableHeaders: [
         { title: '시각', align: 'center', key: 'SEQ' },
+        { title: '점수', align: 'center', key: 'SCO' },
         { title: '온도(°C)', align: 'center', key: 'TMP' },
         { title: '날씨', align: 'center', key: 'SKY' },
         { title: '강수', align: 'center', key: 'PTY' },
@@ -129,6 +137,7 @@ export default {
       if (result.data === null) return;
       
       this.tableContents = result.data[0];
+      console.log(result.data[0][0].TMP)
     }
   }, 
   methods: {
@@ -151,15 +160,12 @@ export default {
   },
   computed: {
     tableContentsUpdate() {
-      const SKY_DATA_CODE = ['-', '☀️', '-', '🌤️', '🌥️'];
-      const PTY_DATA_CODE = ['-', '☔', '☔❄️', '❄️', '🌂'];
-      const SNO_DATA_INCLUDES = ['적설없음', '0', ''];
 
       return [...Array(this.tableContents.length).keys()].map(i => {
         const row = { ...this.tableContents[i % this.tableContents.length] };
-        row.SKY = SKY_DATA_CODE[row.SKY];
-        row.PTY = PTY_DATA_CODE[row.PTY];
-        row.SNO = SNO_DATA_INCLUDES.includes(row.SNO) ? '-' : row.SNO;
+        row.SKY = this.SKY_DATA_CODE[row.SKY];
+        row.PTY = this.PTY_DATA_CODE[row.PTY];
+        row.SNO = this.SNO_DATA_INCLUDES.includes(row.SNO) ? '-' : row.SNO;
         return row;
       })
     }

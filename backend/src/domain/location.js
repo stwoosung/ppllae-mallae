@@ -43,10 +43,8 @@ router.post('/getScoreInfo', async (req, res) => {
     return;
   }
   
-  const dataTable = []; 
-  
-  let nowWeather = null; 
-  let nowTemp = null;
+  const dataTable = [];  
+  let totalScore = null; 
 
   result.item.forEach(row => {
 
@@ -67,6 +65,7 @@ router.post('/getScoreInfo', async (req, res) => {
       dataTable.push({
         time: timeKey,
         SEQ: fnFormatDate(timeKey), 
+        SCO: null, 
         TMP: row.category === 'TMP' ? row.fcstValue : null,
         WSD: row.category === 'WSD' ? row.fcstValue : null, 
         SKY: row.category === 'SKY' ? row.fcstValue : null,
@@ -78,7 +77,34 @@ router.post('/getScoreInfo', async (req, res) => {
     }
   });
 
-  res.json([ dataTable ]);
+  dataTable.forEach(row => {
+    let score = 0;
+    
+    // 온도
+    if (row.TMP < 0) score -= 10;
+    else if (row.TMP > 5 && row.TMP <= 10) score += 10;
+    else if (row.TMP <= 20) score += 20;
+    else if (row.TMP <= 30) score += 30;
+    else score += 10;
+
+    // 풍속
+    if (row.WSD > 0 && row.WSD < 1) score += 10;
+    else if (row.WSD >= 1 && row.WSD <= 5) score += 20;
+
+    // 습도
+    if (row.REH < 30) score += 20;
+    else if (row.REH <= 60) score += 10;
+    else score -= 10;
+
+    // 날씨
+    if (row.SKY == 1) score += 40;
+    else if (row.SKY == 3 || row.SKY == 4) score += 20;
+    if (row.PTY == 1 || row.PTY == 2 || row.PTY == 3 || row.PTY == 4) score -= 40;
+
+    row.SCO = Math.max(0, Math.min(100, score));
+    totalScore += score
+  });
+  res.json([ dataTable, Math.floor(totalScore / dataTable.length) ]);
 });
 
 module.exports = router;
