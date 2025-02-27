@@ -32,13 +32,7 @@
                 </v-col>
               </v-row>
               
-              <v-data-table-virtual 
-                :headers="tableHeaders"
-                :items="tableContentsUpdate"
-                fixed-header
-                height="350"
-                class="pb-15"
-              ></v-data-table-virtual>
+              <DataTableComponent :items="dataTableContents"/>
               
               <v-row>
                 <v-col cols="12" sm="6" md="6">
@@ -82,50 +76,38 @@
 <script>
 import WeatherAnimation from '@/components/WeatherAnimation.vue'; 
 import ChartComponent from '@/components/ChartComponent.vue';
+import DataTableComponent from '@/components/DataTableComponent.vue';
 import { getListFromGeoLocation, getSecondList, getThirdList, getScoreInfo } from '@/api/location';
 
 export default {
   components: {
     WeatherAnimation,
-    ChartComponent
+    ChartComponent, 
+    DataTableComponent
   }, 
   data() {
     return {
       
-      SKY_DATA_CODE: ['-', '☀️', '-', '🌤️', '☁️'],
-      PTY_DATA_CODE: ['-', '☔', '☔❄️', '❄️', '🌂'],
-      SNO_DATA_INCLUDES: ['적설없음', '0', ''],
-
-      tableHeaders: [
-        { title: '시각', align: 'center', key: 'SEQ' },
-        { title: '점수', align: 'center', key: 'SCO' },
-        { title: '온도(°C)', align: 'center', key: 'TMP' },
-        { title: '날씨', align: 'center', key: 'SKY' },
-        { title: '강수', align: 'center', key: 'PTY' },
-        { title: '강수확률(%)', align: 'center', key: 'POP' },
-        { title: '풍속(m/s)', align: 'center', key: 'WSD' },
-        { title: '습도(%)', align: 'center', key: 'REH' },
-        { title: '적설(cm)', align: 'center', key: 'SNO' },
-      ],
-      tableContents: [{}],
-
+      
       selected1: null,
       selected2: null,
       selected3: null,
-
-      items1: ['강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시', '대전광역시', '부산광역시', '서울특별시', '세종특별자치시', '울산광역시', '이어도', '인천광역시', '전라남도', '전북특별자치도', '제주특별자치도', '충청남도', '충청북도'], 
-      items2: [], 
-      items3: [], 
-
+      
       locDepth1: null, 
       locDepth2: null, 
       locDepth3: null, 
+      
+      items1: ['강원특별자치도', '경기도', '경상남도', '경상북도', '광주광역시', '대구광역시', '대전광역시', '부산광역시', '서울특별시', '세종특별자치시', '울산광역시', '이어도', '인천광역시', '전라남도', '전북특별자치도', '제주특별자치도', '충청남도', '충청북도'], 
+      items2: [], 
+      items3: [], 
+      
+      dataTableContents: [{}],
+      chartData: [], 
       
       weather: 'SUN', // 기본 날씨 설정
       score: '🤔', 
       message: '지역을 입력해 주세요!', 
 
-      chartData: []
     };
   },
   mounted() {
@@ -169,7 +151,7 @@ export default {
       this.chartData[5] = result.data[2].SNO;
 
 
-      this.tableContents = result.data[0];
+      this.dataTableContents = result.data[0];
       
       if (result.data[1] >= 80) {
         this.score = "😊 " + result.data[1] + "점"
@@ -202,18 +184,6 @@ export default {
     toggleWeather() {
       this.weather = this.weather === 'RAIN' ? 'SNOW' : 'RAIN';
     },
-  },
-  computed: {
-    tableContentsUpdate() {
-
-      return [...Array(this.tableContents.length).keys()].map(i => {
-        const row = { ...this.tableContents[i % this.tableContents.length] };
-        row.SKY = this.SKY_DATA_CODE[row.SKY];
-        row.PTY = this.PTY_DATA_CODE[row.PTY];
-        row.SNO = this.SNO_DATA_INCLUDES.includes(row.SNO) ? '-' : row.SNO;
-        return row;
-      })
-    }
   }
 };
 </script>
