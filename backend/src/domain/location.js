@@ -25,6 +25,21 @@ router.post('/getThirdList', async (req, res) => {
 });
 
 const fnFormatDate = (str) => `${str.slice(4, 6)}/${str.slice(6, 8)} ${str.slice(9, 11)}시`;
+const fnIsNumber = (val) => { return !isNaN(val) ? val : 0 };
+const fnGetChartFormat = (label) => {
+  return {
+    labels: [],
+    datasets: [{
+      label: label,
+      backgroundColor: 'rgba(66, 165, 245, 0.2)', 
+      borderColor: '#42A5F5', 
+      borderWidth: 1, 
+      data: [],
+      fill: false 
+    }]
+  } 
+};
+
 
 router.post('/getScoreInfo', async (req, res) => {
   const { firstValue, secondValue, thirdValue } = req.body;
@@ -77,6 +92,15 @@ router.post('/getScoreInfo', async (req, res) => {
     }
   });
 
+  const chart = { 
+    SCO: fnGetChartFormat('빨래 점수'),
+    TMP: fnGetChartFormat('온도(°C)'), 
+    POP: fnGetChartFormat('강수확률(%)'),
+    WSD: fnGetChartFormat('풍속(m/s)'),
+    REH: fnGetChartFormat('습도(%)'),
+    SNO: fnGetChartFormat('적설(cm)')
+  };
+
   dataTable.forEach(row => {
     let score = 0;
     
@@ -103,8 +127,23 @@ router.post('/getScoreInfo', async (req, res) => {
 
     row.SCO = Math.max(0, Math.min(100, score));
     totalScore += score
+
+
+    // 차트 생성
+    chart.SCO.labels.push(row.SEQ);
+    chart.SCO.datasets[0].data.push(fnIsNumber(row.SCO));
+    chart.TMP.labels.push(row.SEQ);
+    chart.TMP.datasets[0].data.push(fnIsNumber(row.TMP));
+    chart.POP.labels.push(row.SEQ);
+    chart.POP.datasets[0].data.push(fnIsNumber(row.POP));
+    chart.WSD.labels.push(row.SEQ);
+    chart.WSD.datasets[0].data.push(fnIsNumber(row.WSD));
+    chart.REH.labels.push(row.SEQ);
+    chart.REH.datasets[0].data.push(fnIsNumber(row.REH));
+    chart.SNO.labels.push(row.SEQ);
+    chart.SNO.datasets[0].data.push(fnIsNumber(row.SNO));
   });
-  res.json([ dataTable, Math.floor(totalScore / dataTable.length) ]);
+  res.json([ dataTable, Math.floor(totalScore / dataTable.length), chart ]);
 });
 
 module.exports = router;

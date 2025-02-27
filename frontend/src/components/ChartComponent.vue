@@ -36,13 +36,13 @@ export default {
       this.chart = new Chart(this.$refs.scoreChart.getContext('2d'), {
         type: 'line', 
         data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+          labels: [],
           datasets: [{
-            label: '빨래 점수',
+            label: '데이터가 없습니다',
             backgroundColor: 'rgba(66, 165, 245, 0.2)', 
             borderColor: '#42A5F5', 
             borderWidth: 1, 
-            data: [40, 20, 12, 39, 10, 40, 39],
+            data: [],
             fill: false 
           }]
         },
@@ -57,9 +57,7 @@ export default {
     }, 
 
     updateChart(newData) {
-      // console.log(newData);
-      // console.log(this.chart);
-      this.chart.data.datasets[0].data = newData;
+      this.chart.data = newData;
       this.chart.update(); // 차트 업데이트
     }
   }

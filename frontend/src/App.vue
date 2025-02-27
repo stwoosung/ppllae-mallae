@@ -23,12 +23,12 @@
               </v-row>
               <v-row>
                 <v-col style="font-size: 5em;">
-                  ☀️ 95점
+                  {{ score }}
                 </v-col>
               </v-row>
               <v-row class="pb-15">
                 <v-col style="font-size: 1.5em;">
-                  빨래하기 딱 좋은 날이에요!
+                  {{ message }}
                 </v-col>
               </v-row>
               
@@ -37,10 +37,33 @@
                 :items="tableContentsUpdate"
                 fixed-header
                 height="350"
+                class="pb-15"
               ></v-data-table-virtual>
               
-              <chart-component :chartData="chartData"/>
-              
+              <v-row>
+                <v-col cols="12" sm="6" md="6">
+                  <chart-component :chartData="chartData[0]"/>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <chart-component :chartData="chartData[1]"/>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="6" md="6">
+                  <chart-component :chartData="chartData[2]"/>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <chart-component :chartData="chartData[3]"/>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="6" md="6">
+                  <chart-component :chartData="chartData[4]"/>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <chart-component :chartData="chartData[5]"/>
+                </v-col>
+              </v-row>
             </v-card-text>
             <!--
             <v-card-actions>
@@ -99,8 +122,10 @@ export default {
       locDepth3: null, 
       
       weather: 'SUN', // 기본 날씨 설정
+      score: '🤔', 
+      message: '지역을 입력해 주세요!', 
 
-      chartData: [10, 20, 30, 50, 60, 80, 70]
+      chartData: []
     };
   },
   mounted() {
@@ -136,8 +161,32 @@ export default {
       let result = await getScoreInfo( { 'firstValue': this.selected1, 'secondValue': this.selected2, 'thirdValue': value } );
       if (result.data === null) return;
       
+      this.chartData[0] = result.data[2].SCO;
+      this.chartData[1] = result.data[2].TMP;
+      this.chartData[2] = result.data[2].POP;
+      this.chartData[3] = result.data[2].WSD;
+      this.chartData[4] = result.data[2].REH;
+      this.chartData[5] = result.data[2].SNO;
+
+
       this.tableContents = result.data[0];
-      console.log(result.data[0][0].TMP)
+      
+      if (result.data[1] >= 80) {
+        this.score = "😊 " + result.data[1] + "점"
+        this.message = "빨래하기 딱 좋은 날이에요!"
+      } else if (result.data[1] >= 60) {
+        this.score = "😙 " + result.data[1] + "점"
+        this.message = "빨래하기 괜찮은 날이에요!"
+      } else if (result.data[1] >= 50) {
+        this.score = "🤔 " + result.data[1] + "점"
+        this.message = "빨래하기 나쁘지 않아요!"
+      } else if (result.data[1] >= 40) {
+        this.score = "😥 " + result.data[1] + "점"
+        this.message = "다른 날을 추천해요!"
+      } else {
+        this.score = "😨 " + result.data[1] + "점"
+        this.message = "오늘은 절대 안돼요!"
+      }
     }
   }, 
   methods: {
@@ -152,10 +201,6 @@ export default {
     },
     toggleWeather() {
       this.weather = this.weather === 'RAIN' ? 'SNOW' : 'RAIN';
-    },
-    updateChart() {
-      console.log('app')
-      this.chartData = [Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100];
     },
   },
   computed: {
@@ -173,9 +218,17 @@ export default {
 };
 </script>
 
+
+
 <style>
+
 body {
-  font-family: 'PF스타더스트', sans-serif; 
+  font-family: 'PF스타더스트'; 
+}
+
+@font-face {
+  font-family: 'PF스타더스트';
+  src: url('./assets/PF스타더스트.woff') format('woff');
 }
 
 .v-card-title {
