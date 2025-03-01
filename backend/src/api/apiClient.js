@@ -1,10 +1,7 @@
 const axios = require('axios');
+const { fnGetAPINowWeatherURL, fnGetDateFormat, fnGetHourFormat } = require('../global/utils');
 
 const API_KEY = process.env.API_KEY 
-
-const fnGetAPINowWeatherURL = (stringType, date, hour, x, y) => { return `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=${ API_KEY }&numOfRows=1000&dataType=${ stringType }&base_date=${ date }&base_time=${ hour }&nx=${ x }&ny=${ y }`; }
-const fnGetDateFormat = (date) => { return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`; }
-const fnGetHourFormat = (date) => { return `${String(date.getHours()).padStart(2, '0')}00`; }
 
 const fnCallAPINowWeather = async (x, y) => {
     try {
@@ -15,8 +12,8 @@ const fnCallAPINowWeather = async (x, y) => {
             date.setHours(date.getHours() - 1);
         }
 
-        console.log(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
-        let result = await axios.get(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y)); 
+        console.log(fnGetAPINowWeatherURL(API_KEY, 'JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
+        let result = await axios.get(fnGetAPINowWeatherURL(API_KEY, 'JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y)); 
         
         // resultCode 03: NO_DATA
         // API 서버 업데이트가 아직 이루어지지 않았을 때
@@ -31,6 +28,7 @@ const fnCallAPINowWeather = async (x, y) => {
         
     } catch (error) {
         console.log(error);
+        return null;
     }
 }
 

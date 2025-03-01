@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { executeQuery } = require('../db/database'); 
 const { fnCallAPINowWeather } = require('../api/apiClient');
+const { fnGetDateKey, fnIsNumber } = require('../global/utils');
 
 router.post('/getListFromGeoLocation', async (req, res) => {
   // 좌표는 절대값이기 때문에 소수점 버림 처리함
@@ -24,8 +25,6 @@ router.post('/getThirdList', async (req, res) => {
   res.json(result);
 });
 
-const fnFormatDate = (str) => `${str.slice(4, 6)}/${str.slice(6, 8)} ${str.slice(9, 11)}시`;
-const fnIsNumber = (val) => { return !isNaN(val) ? val : 0 };
 const fnGetChartFormat = (label) => {
   return {
     labels: [],
@@ -79,7 +78,7 @@ router.post('/getScoreInfo', async (req, res) => {
     } else {
       dataTable.push({
         time: timeKey,
-        SEQ: fnFormatDate(timeKey), 
+        SEQ: fnGetDateKey(timeKey), 
         SCO: null, 
         TMP: row.category === 'TMP' ? row.fcstValue : null,
         WSD: row.category === 'WSD' ? row.fcstValue : null, 
