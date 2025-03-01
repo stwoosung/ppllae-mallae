@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { executeQuery } = require('../db/database'); 
 const { fnCallAPINowWeather } = require('../api/apiClient');
-const { fnGetDateKey, fnIsNumber } = require('../global/utils');
+const { fnGetDateKey, fnIsNumber, fnGetChartFormat } = require('../global/utils');
 
 router.post('/getListFromGeoLocation', async (req, res) => {
   // 좌표는 절대값이기 때문에 소수점 버림 처리함
@@ -24,21 +24,6 @@ router.post('/getThirdList', async (req, res) => {
   const result = await executeQuery('SELECT DISTINCT depth3 FROM location WHERE depth1 = ? AND depth2 = ?;', [ firstValue, secondValue ]);
   res.json(result);
 });
-
-const fnGetChartFormat = (label) => {
-  return {
-    labels: [],
-    datasets: [{
-      label: label,
-      backgroundColor: 'rgba(66, 165, 245, 0.2)', 
-      borderColor: '#42A5F5', 
-      borderWidth: 1, 
-      data: [],
-      fill: false 
-    }]
-  } 
-};
-
 
 router.post('/getScoreInfo', async (req, res) => {
   const { firstValue, secondValue, thirdValue } = req.body;
@@ -142,6 +127,28 @@ router.post('/getScoreInfo', async (req, res) => {
     chart.SNO.labels.push(row.SEQ);
     chart.SNO.datasets[0].data.push(fnIsNumber(row.SNO));
   });
+
+  // animation test
+
+  const TEST_CODE = 1;
+  switch(TEST_CODE) {
+    case 1: 
+      dataTable[0].SKY = 1;
+      break;
+    case 2:
+      dataTable[0].SKY = 3;
+      break;
+    case 3:
+      dataTable[0].SKY = 4;
+      dataTable[0].PTY = 1;
+      break;
+    case 4:
+      dataTable[0].SKY = 4;
+      dataTable[0].PTY = 2;
+      break;
+  }
+
+  
   res.json([ dataTable, Math.floor(totalScore / dataTable.length), chart ]);
 });
 

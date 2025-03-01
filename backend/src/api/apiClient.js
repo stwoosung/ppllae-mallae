@@ -18,7 +18,7 @@ const fnCallAPINowWeather = async (x, y) => {
         // resultCode 03: NO_DATA
         // API 서버 업데이트가 아직 이루어지지 않았을 때
         // 3시간 전 API 결과를 호출한다.
-        if (result.data.response.header.resultCode === "03") {
+        if (result.data.response.header == undefined || result.data.response.header.resultCode === "03") {
             date.setHours(date.getHours() - 3);
             result = await axios.get(fnGetAPINowWeatherURL('JSON', fnGetDateFormat(date), fnGetHourFormat(date), x, y));
         } 

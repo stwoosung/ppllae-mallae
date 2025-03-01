@@ -1,7 +1,7 @@
 <template>
   <div id="background" :style="{ backgroundColor: backgroundColor }"></div>
 </template>
-  
+
 <script>
   export default {
     props: {
@@ -11,9 +11,9 @@
     },
     data() {
       return {
-        backgroundColor: '#1E3A5F', // 기본 배경색
-        rainInterval: null, // 비 애니메이션 interval ID
-        snowInterval: null, // 눈 애니메이션 interval ID
+        backgroundColor: '#4682B4', 
+        rainInterval: null, 
+        snowInterval: null, 
       };
     },
     mounted() {
@@ -30,8 +30,7 @@
           RAIN: 'RAIN',
           SNOW: 'SNOW',
         };
-  
-        // 기존의 interval 클리어
+
         if (this.rainInterval) {
           clearInterval(this.rainInterval);
           this.rainInterval = null;
@@ -40,58 +39,57 @@
           clearInterval(this.snowInterval);
           this.snowInterval = null;
         }
-  
+
         switch (this.weather) {
           case Weather.SUN:
-            this.backgroundColor = 'lightblue';
+            this.backgroundColor = '#4682B4';
             break;
           case Weather.CLOUD:
-            this.backgroundColor = 'gray';
+            this.backgroundColor = '#87CEFA';
             break;
           case Weather.RAIN:
             this.backgroundColor = '#1E3A5F';
-            this.createRain();
+            this.fnSetRainAnimation();
             break;
           case Weather.SNOW:
             this.backgroundColor = '#0D1B2A';
-            this.createSnow();
+            this.fnSetSnowAnimation();
             break;
         }
       },
-      createRain() {
-        if (this.rainInterval) clearInterval(this.rainInterval);
-        if (this.snowInterval) clearInterval(this.snowInterval);
-  
+      fnSetRainAnimation() {
         this.rainInterval = setInterval(() => {
           const rainDrop = document.createElement('div');
           rainDrop.className = 'rain';
           rainDrop.style.left = Math.random() * window.innerWidth + 'px';
+          rainDrop.style.top = -10 + 'px'; // 화면 위에서 시작
           document.getElementById('background').appendChild(rainDrop);
           rainDrop.style.animationDuration = `${1.0 + Math.random() * 1.5}s`;
-  
+
           rainDrop.addEventListener('animationend', () => {
             rainDrop.remove();
           });
-        }, 200);
+        }, 100);
       },
-      createSnow() {
-        if (this.rainInterval) clearInterval(this.rainInterval);
-        if (this.snowInterval) clearInterval(this.snowInterval);
-  
+      fnSetSnowAnimation() {
         this.snowInterval = setInterval(() => {
           const snowFlake = document.createElement('div');
           snowFlake.className = 'snow';
           snowFlake.style.left = Math.random() * window.innerWidth + 'px';
-  
+          snowFlake.style.top = -10 + 'px'; // 화면 위에서 시작
+
           const size = Math.random() * 10 + 5;
           const opacity = Math.random();
           snowFlake.style.width = size + 'px';
           snowFlake.style.height = size + 'px';
           snowFlake.style.opacity = opacity;
-  
+
           document.getElementById('background').appendChild(snowFlake);
-  
-          snowFlake.style.animationDuration = `${10 + Math.random() * 5}s`;
+
+          const duration = 10 + Math.random() * 5;
+          snowFlake.style.animationDuration = `${duration}s`;
+          snowFlake.style.animationName = 'fall';
+
           snowFlake.addEventListener('animationend', () => {
             snowFlake.remove();
           });
@@ -99,9 +97,9 @@
       },
     },
   };
-  </script>
-  
-  <style>
+</script>
+
+<style>
   #background {
     position: absolute;
     width: 100%;
@@ -120,6 +118,7 @@
   
   .snow {
     position: absolute;
+    top: -10px; /* 화면 위쪽에서 시작 */
     background: white;
     border-radius: 50%;
     animation: fall linear forwards;
@@ -127,8 +126,7 @@
   
   @keyframes fall {
     to {
-      transform: translateY(100vh);
+      transform: translateY(200vh); /* 화면 아래로 떨어짐 */
     }
   }
 </style>
-  

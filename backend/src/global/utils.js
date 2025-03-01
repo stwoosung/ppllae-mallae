@@ -3,11 +3,23 @@ const fnGetDateFormat = (date) => { return `${date.getFullYear()}${String(date.g
 const fnGetHourFormat = (date) => { return `${String(date.getHours()).padStart(2, '0')}00`; }
 const fnGetDateKey = (str) => `${str.slice(4, 6)}/${str.slice(6, 8)} ${str.slice(9, 11)}시`;
 const fnIsNumber = (val) => { return !isNaN(val) ? val : 0 };
+const fnGetChartFormat = (label) => {
+    return {
+      labels: [],
+      datasets: [{
+        label: label,
+        borderWidth: 1, 
+        data: [],
+        fill: false 
+      }]
+    } 
+  };
 
 module.exports = {
     fnGetAPINowWeatherURL, 
     fnGetDateFormat, 
     fnGetHourFormat, 
     fnGetDateKey, 
-    fnIsNumber
+    fnIsNumber, 
+    fnGetChartFormat
 }

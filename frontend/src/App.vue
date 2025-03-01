@@ -31,6 +31,10 @@
                   {{ message }}
                 </v-col>
               </v-row>
+
+              <v-overlay v-model="overlay" class="justify-center" contained>
+                <v-progress-circular indeterminate color="blue" style="margin-top: 30em;"/>
+              </v-overlay>
               
               <DataTableComponent :items="dataTableContents"/>
               
@@ -59,17 +63,12 @@
                 </v-col>
               </v-row>
             </v-card-text>
-            <!--
-            <v-card-actions>
-              <v-btn @click="toggleWeather">테스트 버튼</v-btn>
-            </v-card-actions>
-            -->
+
           </v-card>
         </v-col>
       </v-row>
     </v-container>
     <WeatherAnimation :weather="weather" />
-    
   </v-app>
 </template>
 
@@ -87,7 +86,7 @@ export default {
   }, 
   data() {
     return {
-      
+      overlay: false, 
       
       selected1: null,
       selected2: null,
@@ -107,14 +106,12 @@ export default {
       weather: 'SUN', // 기본 날씨 설정
       score: '🤔', 
       message: '지역을 입력해 주세요!', 
-
     };
   },
   mounted() {
-    this.getLocation();
+    this.fnGetLocation();
   },
   watch: {
-
     async selected1(value) {
       this.items2 = this.items3 = [];
       this.selected2 = this.selected3 = null;
@@ -140,16 +137,47 @@ export default {
     async selected3(value) {
       if (value === null) return;
       
+      this.overlay = true;
       let result = await getScoreInfo( { 'firstValue': this.selected1, 'secondValue': this.selected2, 'thirdValue': value } );
-      if (result.data === null) return;
+      this.overlay = false;
       
+      
+      if (result.data === null) {
+        return;
+      }
+
+      let color = '#4682B4';
+      if (result.data[0][0].SKY === 1) {
+        this.weather = "SUN";
+        color = '#4682B4';
+      }
+      else if (result.data[0][0].SKY === 3) { 
+        this.weather = "CLOUD";
+        color = '#87CEFA';
+      }
+      else if (result.data[0][0].SKY === 4 && (result.data[0][0].PTY === 1 || result.data[0][0].PTY === 4)) {
+        this.weather = "RAIN";
+        color = '#1E3A5F';
+      }
+      else if (result.data[0][0].SKY === 4 && (result.data[0][0].PTY === 2 || result.data[0][0].PTY === 3)) {
+        this.weather = "SNOW";
+        color = '#0D1B2A';
+      }
+
+      console.log(color)
+      Object.keys(result.data[2]).forEach(key => {
+        result.data[2][key].datasets[0].backgroundColor = color;
+        result.data[2][key].datasets[0].borderColor = color;
+      });
+
       this.chartData[0] = result.data[2].SCO;
       this.chartData[1] = result.data[2].TMP;
       this.chartData[2] = result.data[2].POP;
       this.chartData[3] = result.data[2].WSD;
       this.chartData[4] = result.data[2].REH;
       this.chartData[5] = result.data[2].SNO;
-
+      
+      console.log(this.chartData[0]);
 
       this.dataTableContents = result.data[0];
       
@@ -172,7 +200,7 @@ export default {
     }
   }, 
   methods: {
-    async getLocation() {
+    async fnGetLocation() {
       window.navigator.geolocation.getCurrentPosition(async (position) => {
         let result = await getListFromGeoLocation({ 'x': position.coords.longitude, 'y': position.coords.latitude });
         this.locDepth1 = result.data.depth1; 
@@ -180,10 +208,8 @@ export default {
         this.locDepth3 = result.data.depth3; 
         this.selected1 = this.locDepth1; 
       });
-    },
-    toggleWeather() {
-      this.weather = this.weather === 'RAIN' ? 'SNOW' : 'RAIN';
-    },
+    }
+    
   }
 };
 </script>
