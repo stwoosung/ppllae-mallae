@@ -130,7 +130,7 @@ router.post('/getScoreInfo', async (req, res) => {
 
   // animation test
 
-  const TEST_CODE = 1;
+  const TEST_CODE = null;
   switch(TEST_CODE) {
     case 1: 
       dataTable[0].SKY = 1;
